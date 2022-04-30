@@ -1,0 +1,41 @@
+colorscheme gruvbox-dark
+
+# start plugin manager
+# https://github.com/andreyorst/plug.kak
+source "%val{config}/plugins/plug.kak/rc/plug.kak"
+plug "andreyorst/plug.kak" noload
+
+# enable kakboard plugin
+plug "lePerdu/kakboard" %{
+    hook global WinCreate .* %{ kakboard-enable }
+}
+
+add-highlighter global/ show-whitespaces
+add-highlighter global/ number-lines
+
+set-option global tabstop 4
+set-option global indentwidth 4
+
+# highlight trailing whitespace
+add-highlighter global/trailing-whitespace regex '\h+$' 0:Error
+
+# use tab for both indentation and completion
+hook global InsertCompletionShow .* %{
+    try %{
+        # this command temporarily removes cursors preceded by whitespace;
+        # if there are no cursors left, it raises an error, does not
+        # continue to execute the mapping commands, and the error is eaten
+        # by the `try` command so no warning appears.
+        execute-keys -draft 'h<a-K>\h<ret>'
+        map window insert <tab> <c-n>
+        map window insert <s-tab> <c-p>
+        hook -once -always window InsertCompletionHide .* %{
+            unmap window insert <tab> <c-n>
+            unmap window insert <s-tab> <c-p>
+        }
+    }
+}
+
+# map <tab> to space indentation
+map global insert <tab> '<a-;><a-gt>'
+
