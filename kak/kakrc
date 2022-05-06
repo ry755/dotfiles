@@ -26,6 +26,11 @@ plug 'delapouite/kakoune-buffers' %{
     map global normal B ': enter-user-mode -lock buffers<ret>' -docstring 'buffers (lock)'
 }
 
+# enable discord plugin
+plug "abuffseagull/kakoune-discord" do %{ cargo install --path . --force } %{
+    discord-presence-enable
+}
+
 # enable powerline plugin
 plug "andreyorst/powerline.kak" defer powerline_gruvbox %{
     powerline-theme gruvbox
