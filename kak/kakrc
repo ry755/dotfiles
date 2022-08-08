@@ -1,4 +1,4 @@
-colorscheme undoo
+# colorscheme undoo
 add-highlighter global/ show-whitespaces
 add-highlighter global/ number-lines
 
@@ -6,6 +6,11 @@ add-highlighter global/ number-lines
 # https://github.com/robertmeta/plug.kak
 source "%val{config}/plugins/plug.kak/rc/plug.kak"
 plug "robertmeta/plug.kak" noload
+
+# enable catppuccin theme
+plug "catppuccin/kakoune" theme config %{
+    colorscheme catppuccin
+}
 
 # enable kakboard plugin
 plug "lePerdu/kakboard" %{
@@ -46,6 +51,8 @@ plug "alexherbo2/auto-pairs.kak" %{
 }
 
 # kcr and sidetree
+# https://github.com/alexherbo2/kakoune.cr
+# https://github.com/topisani/sidetree
 map -docstring 'file explorer' global normal <c-e> ':connect terminal sidetree --select %val{buffile}<ret>'
 evaluate-commands %sh{
     kcr init kakoune
