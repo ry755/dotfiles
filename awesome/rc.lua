@@ -32,7 +32,7 @@ do
     end)
 end
 
-beautiful.init(gears.filesystem.get_configuration_dir() .. "themes/fox/theme.lua")
+beautiful.init(gears.filesystem.get_configuration_dir() .. "themes/foxppuccin/theme.lua")
 
 awful.spawn.once("picom -b")
 awful.spawn.once("xss-lock i3lock &")
@@ -58,9 +58,9 @@ awful.rules.rules = {
     },
 
     -- Add titlebars to normal clients and dialogs
-    { rule_any = { type = { "normal", "dialog" } },
-      properties = { titlebars_enabled = true }
-    }
+    --{ rule_any = { type = { "normal", "dialog" } },
+    --  properties = { titlebars_enabled = true }
+    --}
 }
 -- }}}
 
