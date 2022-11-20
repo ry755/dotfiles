@@ -20,6 +20,20 @@ w_volume = awful.widget.watch('bash -c "~/.config/awesome/bin/status vol"', 5)
 -- Create a system tray widget
 w_systray = wibox.layout.margin(wibox.widget.systray(), 0, 0, 3, 3)
 
+-- Create a launcher widget and a main menu
+awesome_menu = {
+    { "manual", terminal .. " -e man awesome" },
+    { "edit config", editor_cmd .. " " .. awesome.conffile },
+    { "restart", awesome.restart },
+    { "quit", function() awesome.quit() end },
+}
+main_menu = awful.menu({ items = { { "awesome", awesome_menu, beautiful.awesome_icon },
+                                   { "open terminal", terminal }
+                                 }
+                  })
+
+w_launcher = wibox.layout.margin(awful.widget.launcher({ image = beautiful.awesome_icon, menu = main_menu }), 3, 3, 3, 3)
+
 -- Create a wibox for each screen and add it
 local taglist_buttons = gears.table.join(
                     awful.button({ }, 1, function(t) t:view_only() end),
@@ -99,6 +113,37 @@ awful.screen.connect_for_each_screen(function(s)
         bg = beautiful.bg_normal
     }, beautiful.bg_normal)
 
+    -- Create a tasklist widget
+    s.w_tasklist = awful.widget.tasklist {
+        screen   = s,
+        filter   = awful.widget.tasklist.filter.currenttags,
+        buttons  = tasklist_buttons,
+        widget_template = {
+            {
+                {
+                    {
+                        {
+                            id = 'icon_role',
+                            widget = wibox.widget.imagebox,
+                        },
+                        margins = 8,
+                        widget = wibox.container.margin,
+                    },
+                    {
+                        id = 'text_role',
+                        widget = wibox.widget.textbox,
+                    },
+                    layout = wibox.layout.fixed.horizontal,
+                },
+                left = 0,
+                right = 8,
+                widget = wibox.container.margin
+            },
+            id = 'background_role',
+            widget = wibox.container.background,
+        },
+    }
+
     -- Create the bar
     s.bar = awful.wibar({
         position = "top",
@@ -111,7 +156,9 @@ awful.screen.connect_for_each_screen(function(s)
         layout = wibox.layout.align.horizontal,
         { -- Left widgets
             layout = wibox.layout.fixed.horizontal,
+            w_launcher,
             s.w_taglist,
+            s.w_tasklist,
         },
         {
             layout = wibox.layout.align.horizontal { visible = false },

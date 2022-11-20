@@ -34,7 +34,7 @@ theme.bg_normal = theme.none
 theme.bg_focus = "#181825"
 theme.bg_dark = "#181825"
 theme.bg_urgent = "#f38ba8"
-theme.bg_minimize = "#b4befe"
+theme.bg_minimize = theme.bg_dark
 theme.bg_systray = "#96cdfb"
 
 theme.fg_normal = "#6c7086"
@@ -50,6 +50,8 @@ theme.border_focus = theme.fg_focus
 theme.border_marked = theme.fg_focus
 
 -- Help hotkeys
+theme.hotkeys_bg = "#1e1e2e"
+theme.hotkeys_fg = theme.bg_systray
 theme.hotkeys_modifiers_fg = theme.fg_urgent
 
 -- Titlebar buttons
@@ -78,8 +80,9 @@ theme.notification_bg = "#1e1e2e"
 -- menu_[bg|fg]_[normal|focus]
 -- menu_[border_color|border_width]
 theme.menu_submenu_icon = themes_path.."submenu.png"
-theme.menu_height = dpi(15)
-theme.menu_width  = dpi(100)
+theme.menu_height = dpi(32)
+theme.menu_width  = dpi(256)
+theme.menu_bg_normal = "#1e1e2e"
 
 -- You can add as many variables as
 -- you wish and access them by using
