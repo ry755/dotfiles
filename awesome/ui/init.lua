@@ -1,38 +1,96 @@
 local awful = require("awful")
 local beautiful = require("beautiful")
 local gears = require("gears")
+local lain = require("lain")
 local wibox = require("wibox")
 local xresources = require("beautiful.xresources")
 local dpi = xresources.apply_dpi
+local theme = beautiful.get()
 
 -- Create a spacer widget
 w_spacer = wibox.widget.textbox(" ")
+w_line_spacer = wibox.widget.textbox(lain.util.markup.font("Tamzen 3", " ") .. lain.util.markup.fontfg(theme.font, "#777777", "|") .. lain.util.markup.font("Tamzen 3", " "))
 
 -- Create a textclock widget
-w_textclock = wibox.widget.textclock("%a %b %d, %l:%M %P")
+w_textclock = wibox.widget.textclock("%l:%M %P")
 
 -- Create a battery widget
-w_battery = awful.widget.watch('bash -c "~/.config/awesome/bin/status bat"', 30)
+w_battery_icon = wibox.widget.imagebox(theme.bat)
+local batbar = wibox.widget {
+    forced_height    = dpi(1),
+    forced_width     = dpi(59),
+    color            = theme.fg_normal,
+    background_color = theme.bg_normal,
+    margins          = 1,
+    paddings         = 1,
+    ticks            = true,
+    ticks_size       = dpi(6),
+    widget           = wibox.widget.progressbar,
+}
+local batupd = lain.widget.bat({
+    battery = "BAT0",
+    settings = function()
+        if (not bat_now.status) or bat_now.status == "N/A" or type(bat_now.perc) ~= "number" then return end
+
+        if bat_now.status == "Charging" then
+            w_battery_icon:set_image(theme.ac)
+            if bat_now.perc >= 98 then
+                batbar:set_color(theme.fg_normal)
+            elseif bat_now.perc > 50 then
+                batbar:set_color(theme.fg_normal)
+            elseif bat_now.perc > 15 then
+                batbar:set_color(theme.fg_normal)
+            else
+                batbar:set_color(theme.bg_urgent)
+            end
+        else
+            if bat_now.perc >= 98 then
+                batbar:set_color(theme.fg_normal)
+            elseif bat_now.perc > 50 then
+                batbar:set_color(theme.fg_normal)
+                w_battery_icon:set_image(theme.bat)
+            elseif bat_now.perc > 15 then
+                batbar:set_color(theme.fg_normal)
+                w_battery_icon:set_image(theme.bat_low)
+            else
+                batbar:set_color(theme.bg_urgent)
+                w_battery_icon:set_image(theme.bat_no)
+            end
+        end
+        batbar:set_value(bat_now.perc / 100)
+    end
+})
+local batbg = wibox.container.background(batbar, "#474747", gears.shape.rectangle)
+w_battery = wibox.container.margin(batbg, dpi(2), dpi(7), dpi(4), dpi(4))
 
 -- Create a volume widget
-w_volume = awful.widget.watch('bash -c "~/.config/awesome/bin/status vol"', 5)
+local w_volume_icon = wibox.widget.imagebox(theme.vol)
+local volume = lain.widget.alsabar {
+    width = dpi(59), border_width = 0, ticks = true, ticks_size = dpi(6),
+    notification_preset = { font = theme.font },
+    settings = function()
+        if volume_now.status == "off" then
+            w_volume_icon:set_image(theme.vol_mute)
+        elseif volume_now.level == 0 then
+            voliw_volume_iconcon:set_image(theme.vol_no)
+        elseif volume_now.level <= 50 then
+            w_volume_icon:set_image(theme.vol_low)
+        else
+            w_volume_icon:set_image(theme.vol)
+        end
+    end,
+    colors = {
+        background   = theme.bg_normal,
+        mute         = theme.bg_urgent,
+        unmute       = theme.fg_normal
+    }
+}
+volume.tooltip.wibox.fg = theme.fg_focus
+local volumebg = wibox.container.background(volume.bar, "#474747", gears.shape.rectangle)
+w_volume = wibox.container.margin(volumebg, dpi(2), dpi(7), dpi(4), dpi(4))
 
 -- Create a system tray widget
 w_systray = wibox.layout.margin(wibox.widget.systray(), 0, 0, 3, 3)
-
--- Create a launcher widget and a main menu
-awesome_menu = {
-    { "manual", terminal .. " -e man awesome" },
-    { "edit config", editor_cmd .. " " .. awesome.conffile },
-    { "restart", awesome.restart },
-    { "quit", function() awesome.quit() end },
-}
-main_menu = awful.menu({ items = { { "awesome", awesome_menu, beautiful.awesome_icon },
-                                   { "open terminal", terminal }
-                                 }
-                  })
-
-w_launcher = wibox.layout.margin(awful.widget.launcher({ image = beautiful.awesome_icon, menu = main_menu }), 3, 3, 3, 3)
 
 -- Create a wibox for each screen and add it
 local taglist_buttons = gears.table.join(
@@ -98,7 +156,7 @@ awful.screen.connect_for_each_screen(function(s)
 
     -- Create an imagebox widget which will contain an icon indicating which layout we're using.
     -- We need one layoutbox per screen.
-    s.w_layoutbox = wibox.layout.margin(awful.widget.layoutbox(s), 4, 4, 4, 4)
+    s.w_layoutbox = wibox.layout.margin(awful.widget.layoutbox(s), 2, 2, 2, 2)
     s.w_layoutbox:buttons(gears.table.join(
                            awful.button({ }, 1, function () awful.layout.inc( 1) end),
                            awful.button({ }, 3, function () awful.layout.inc(-1) end),
@@ -126,7 +184,7 @@ awful.screen.connect_for_each_screen(function(s)
                             id = 'icon_role',
                             widget = wibox.widget.imagebox,
                         },
-                        margins = 8,
+                        margins = 2,
                         widget = wibox.container.margin,
                     },
                     {
@@ -148,7 +206,8 @@ awful.screen.connect_for_each_screen(function(s)
     s.bar = awful.wibar({
         position = "top",
         screen = s,
-        height = dpi(32),
+        --height = dpi(32),
+        height = dpi(18),
     })
 
     -- Add widgets to the bar
@@ -156,7 +215,7 @@ awful.screen.connect_for_each_screen(function(s)
         layout = wibox.layout.align.horizontal,
         { -- Left widgets
             layout = wibox.layout.fixed.horizontal,
-            w_launcher,
+            s.w_layoutbox,
             s.w_taglist,
             s.w_tasklist,
         },
@@ -167,14 +226,15 @@ awful.screen.connect_for_each_screen(function(s)
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
             w_systray,
-            w_spacer,
+            w_line_spacer,
+            w_volume_icon,
             w_volume,
-            w_spacer,
+            w_line_spacer,
+            w_battery_icon,
             w_battery,
-            w_spacer,
+            w_line_spacer,
             w_textclock,
             w_spacer,
-            s.w_layoutbox,
         },
     }
 end)

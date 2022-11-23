@@ -12,7 +12,7 @@ local themes_path = gfs.get_configuration_dir() .. "themes/foxppuccin/"
 
 local theme = {}
 
-theme.font = "JetBrainsMono Nerd Font 12"
+theme.font = "Tamzen 12"
 
 -- There are other variable sets
 -- overriding the default one when
@@ -29,15 +29,14 @@ theme.font = "JetBrainsMono Nerd Font 12"
 
 theme.none = "#00000000"
 
---theme.bg_normal = "#1e1e2e"
-theme.bg_normal = theme.none
+theme.bg_normal = "#1e1e2e"
 theme.bg_focus = "#181825"
 theme.bg_dark = "#181825"
 theme.bg_urgent = "#f38ba8"
 theme.bg_minimize = theme.bg_dark
-theme.bg_systray = "#96cdfb"
+--theme.bg_systray = "#96cdfb"
 
-theme.fg_normal = "#6c7086"
+theme.fg_normal = "#bbbbbb"
 theme.fg_focus = "#89b4fa"
 theme.fg_urgent = "#cdd6f4"
 theme.fg_minimize = "#cdd6f4"
@@ -48,6 +47,17 @@ theme.border_width = dpi(4)
 theme.border_normal = theme.bg_normal
 theme.border_focus = theme.fg_focus
 theme.border_marked = theme.fg_focus
+
+-- Icons
+theme.vol = themes_path .. "/icons/vol.png"
+theme.vol_low = themes_path .. "/icons/vol_low.png"
+theme.vol_no = themes_path .. "/icons/vol_no.png"
+theme.vol_mute = themes_path .. "/icons/vol_mute.png"
+
+theme.ac = themes_path .. "/icons/ac.png"
+theme.bat = themes_path .. "/icons/bat.png"
+theme.bat_low = themes_path .. "/icons/bat_low.png"
+theme.bat_no = themes_path .. "/icons/bat_no.png"
 
 -- Help hotkeys
 theme.hotkeys_bg = "#1e1e2e"
