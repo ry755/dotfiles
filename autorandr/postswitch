@@ -1,6 +1,0 @@
-#!/bin/bash
-
-# restart i3
-# the i3 config automatically handles resetting the bar and wallpaper
-sleep 4
-i3-msg restart
